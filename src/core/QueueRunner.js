@@ -19,6 +19,8 @@ getJasmineRequireObj().QueueRunner = function(j$) {
     this.userContext = attrs.userContext || {};
     this.timeout = attrs.timeout || {setTimeout: setTimeout, clearTimeout: clearTimeout};
     this.fail = attrs.fail || function() {};
+    this.failFast = attrs.failFast || false;
+    this.currentRunnable = attrs.currentRunnable || {result: {failedExpectations: []}};
   }
 
   QueueRunner.prototype.execute = function() {
@@ -28,16 +30,27 @@ getJasmineRequireObj().QueueRunner = function(j$) {
   QueueRunner.prototype.run = function(queueableFns, recursiveIndex) {
     var length = queueableFns.length,
       self = this,
+      failedTest = false,
+      failFast = self.failFast,
+      currentRunnable = self.currentRunnable,
       iterativeIndex;
 
 
     for(iterativeIndex = recursiveIndex; iterativeIndex < length; iterativeIndex++) {
       var queueableFn = queueableFns[iterativeIndex];
+      if (failFast) {
+        console.log(failedTest, failFast);
+      }
+
       if (queueableFn.fn.length > 0) {
         attemptAsync(queueableFn);
         return;
       } else {
         attemptSync(queueableFn);
+      }
+
+      if (failFast && anyFaliures(currentRunnable)) {
+        break;
       }
     }
 
@@ -97,6 +110,14 @@ getJasmineRequireObj().QueueRunner = function(j$) {
         //use a finally block to close the loop in a nice way..
         throw e;
       }
+    }
+
+    function anyFaliures(currentRunnable) {
+      if (currentRunnable.result.failedExpectations.length > 0) {
+        return true;
+      }
+
+      return false;
     }
   };
 

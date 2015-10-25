@@ -1,4 +1,5 @@
 describe("CallTracker", function() {
+
   it("tracks that it was called when executed", function() {
     var callTracker = new j$.CallTracker();
 

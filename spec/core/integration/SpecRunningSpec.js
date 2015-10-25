@@ -697,6 +697,32 @@ describe("jasmine spec running", function () {
     }).toThrowError(/afterAll/);
   });
 
+  it("should only run the first test", function(done) {
+    var actions = 0;
+    env.failFast = true;
+
+    env.it('does it 1', function() {
+        actions++;
+        env.expect(false).toBe(true);
+    });
+
+    env.it('does it 2', function() {
+        actions++;
+    });
+
+     var assertions = function() {
+
+      expect(actions).toEqual(1);
+
+      done();
+    };
+
+    env.addReporter({jasmineDone: assertions});
+
+    env.execute();
+    
+  });
+
   it("should run the tests in a consistent order when a seed is supplied", function(done) {
     var actions = [];
     env.randomizeTests(true);

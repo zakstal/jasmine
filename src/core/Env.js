@@ -23,6 +23,8 @@ getJasmineRequireObj().Env = function(j$) {
     var random = false;
     var seed = null;
 
+    this.failFast = false;
+
     var currentSuite = function() {
       return currentlyExecutingSuites[currentlyExecutingSuites.length - 1];
     };
@@ -191,6 +193,8 @@ getJasmineRequireObj().Env = function(j$) {
       options.clearStack = options.clearStack || clearStack;
       options.timeout = {setTimeout: realSetTimeout, clearTimeout: realClearTimeout};
       options.fail = self.fail;
+      options.failFast = self.failFast;
+      options.currentRunnable = currentRunnable();
 
       new j$.QueueRunner(options).execute();
     };

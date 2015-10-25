@@ -45,7 +45,6 @@ module.exports = function(grunt) {
       jasmine.onComplete(function(passed) {
         done(passed);
       });
-
       jasmine.execute();
     }
   );
